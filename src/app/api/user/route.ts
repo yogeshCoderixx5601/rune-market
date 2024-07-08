@@ -16,10 +16,10 @@ export async function POST(req: NextRequest) {
     });
 
     console.log(existingUser,"-----------existingUser")
-    // if (existingUser) {
-    //   // User already exists, return an appropriate response
-    //   return NextResponse.json({ message: "User already exists" });
-    // }
+    if (existingUser) {
+      // User already exists, return an appropriate response
+      return NextResponse.json({ message: "User already exists" });
+    }
     // Create a new user based on the schema
     const user = new User(userDetails);
 

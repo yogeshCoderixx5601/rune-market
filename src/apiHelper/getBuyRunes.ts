@@ -1,20 +1,18 @@
 "use server";
-import { IUser } from "@/types";
+import { IBuyRunes } from "@/types";
 import axios from "axios";
 
-interface RunesResponse {
+interface AllRunesResponse {
   success: boolean;
   message: string;
+  result: IBuyRunes[];
 }
 
-export async function addRunes(
-  walletDetails: any
-): Promise<{ data?: RunesResponse; error: string | null } | undefined> {
+export async function getBuyRune(
+): Promise<{ data?: AllRunesResponse; error: string | null } | undefined> {
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_URL}/api/get-utxos`,
-      walletDetails
-    );
+    let url = `${process.env.NEXT_PUBLIC_URL}/api/buy-runes`;
+    const response = await axios.get(url);
 
     if (response.status === 200) {
       return { data: response.data, error: null };

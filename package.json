@@ -9,14 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@bitcoinerlab/secp256k1": "^1.1.1",
+    "@mempool/mempool.js": "^2.3.0",
     "bitcoin-wallet-adapter": "1.6.0",
+    "bitcoinjs-lib": "^6.1.6",
     "copy-to-clipboard": "^3.3.3",
     "mongoose": "^8.4.4",
+    "net": "^1.0.2",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
-    "react-redux": "^9.1.2"
+    "react-redux": "^9.1.2",
+    "tiny-secp256k1": "^2.2.3",
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -25,8 +25,8 @@ import { addNotification } from "@/stores/reducers/notificationReducer";
 import copy from "copy-to-clipboard";
 import { RootState } from "@/stores";
 import { MdOutlineDashboard } from "react-icons/md";
-import { addRunes } from "@/apiHelper/getRunes";
 import { addUser } from "@/apiHelper/addUserDetails";
+import { addUtxos } from "@/apiHelper/addUtxos";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -46,7 +46,6 @@ const Header = () => {
 
   async function getBTCPrice() {
     const btcPrice = await getBTCPriceInDollars();
-    // console.log(btcPrice, "-----btcPrice");
     if (btcPrice) dispatch(setBTCPrice(btcPrice));
   }
   useEffect(() => {
@@ -77,7 +76,7 @@ const Header = () => {
   const addURunesDetails = async () => {
     try {
       if (walletDetails && walletDetails.wallet && walletDetails.connected) {
-        const runes = await addRunes(walletDetails);
+        const runes = await addUtxos(walletDetails);
         console.log(runes, "---runes");
       }
     } catch (error) {

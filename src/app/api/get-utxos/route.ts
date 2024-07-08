@@ -1,93 +1,37 @@
-// set runes in [runes] based on the ordinal address in user collection
+// getting utxos details and runes inside utxo based on rune name
 import dbConnect from "@/lib/dbconnect";
-import { RuneUtxo, User } from "@/modals";
-import { aggregateRuneAmounts, getRunes } from "@/utils/GetRunes";
+import { RuneUtxo } from "@/modals";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  console.log("************post runes to db for user and store utxos api called *************")
+export async function GET(req: NextRequest) {
   try {
-    const walletDetails = await req.json();
-    console.log(walletDetails, "wallet details");
-
-    const runesUtxos = await getRunes(walletDetails.ordinal_address);
-
-    const aggregateRuneAmount = aggregateRuneAmounts(runesUtxos);
-
-    await dbConnect();
-
-    const runes = aggregateRuneAmount.map((rune: { name: any; amount: any; }) => ({
-      name: rune.name,
-      amount: rune.amount,
-    }));
-    // console.log(runes,"----------runes")
-
-    // const address = walletDetails.ordinal_address;
-
-    for (const rune of runes) {
-      const query = {
-        ordinal_address: walletDetails.ordinal_address,
-        "runes.name": { $ne: rune.name },
-      };
-      const update = { $addToSet: { runes: rune } };
-
-      // updating user with runes
-      const result = await User.findOneAndUpdate(query, update, {
-        new: true,
-        useFindAndModify: false,
-      });
-
-      if (result) {
-        // `Rune ${rune.name} already exists, no update performed`
-        console.log(`Rune updated successfully`);
-      } else {
-        console.log(`Rune ${rune.name} already exists, no update performed`);
-        // throw new Error(`Rune ${rune.name} already exists, no update performed`)
-      }
-    }
-
-    const transformedUtxos = runesUtxos.map((utxo: any) => {
-      const runes: any[] = Object.entries(utxo.rune || {}).map(
-        ([key, value]) => {
-          // Explicitly type the value
-          const runeValue = value as {
-            name: string;
-            amount: number;
-            divisibility: number;
-            symbol: string;
-          };
-          return {
-            rune_name: key,
-          rune_amount: runeValue.amount,
-          rune_divisibility: runeValue.divisibility,
-          rune_symbol: runeValue.symbol,
-          };
-        }
+    const runeName = req.nextUrl.searchParams.get("rune");
+    if (!runeName) {
+      return NextResponse.json(
+        { success: false, message: "Rune name is required" },
+        { status: 400 }
       );
-      console.log(runes,"runes")
-      const { rune, ...rest } = utxo;
+    }
+    await dbConnect()
 
-      // Assuming there is only one rune in each utxo.rune object
-      const [firstRune] = runes;
-  
-      return {
-        ...rest,
-        ...firstRune,
-      };
-    });
-    console.log(transformedUtxos, "------transformedUtxos");
+    const decodedRune = decodeURIComponent(runeName);
+    console.log(decodedRune,"---decodedRune")
 
-// create new doc in utxoModal
-const utxos = await RuneUtxo.create(transformedUtxos);
-    console.log("Runes UTXOs saved successfully", utxos);
-
+    // Example query to find UTXOs for the specified runeName
+    const result = await RuneUtxo.find({
+        rune_name: decodedRune,
+      });
+console.log(result,"---------result rune-utxo")
     return NextResponse.json({
-      success:true,
-      message: "Data received and processed successfully.",
-      // utxos: utxos,
+      result,
+      success: true,
+      message: "User runes fetched successfully",
     });
   } catch (error) {
-    console.error("Error :", error);
-    return NextResponse.json({ error: "Error " }, { status: 500 });
+    console.error("Error in GET /api/rune-utxos:", error);
+    return NextResponse.json(
+      { success: false, message: "An error occurred" },
+      { status: 500 }
+    );
   }
 }
