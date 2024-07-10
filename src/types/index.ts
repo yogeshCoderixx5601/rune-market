@@ -99,3 +99,28 @@ export interface IUser {
       mergedSignedBuyingPSBTBase64?: string;
     };
   }
+
+
+
+export interface UtxoData {
+    _id: string;
+    address: string;
+    txid: string;
+    vout: number;
+    utxo_id: string;
+    value: number;
+    status: Status;
+    rune_name: string;
+    rune_amount: number;
+    rune_divisibility: number;
+    rune_symbol: string;
+    maker_fee_bp: number;
+    listed?: boolean;
+    listed_maker_fee_bp: number;
+    __v: number;
+    listed_at: string;
+    listed_price: number;
+    listed_price_per_token: number;
+    listed_seller_receive_address: string;
+    signed_psbt: string;
+}

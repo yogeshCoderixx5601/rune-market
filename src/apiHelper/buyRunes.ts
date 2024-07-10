@@ -30,6 +30,7 @@ export async function buyRunes(
   params: BuyRunesParams
 ): Promise<{ data?: BuyRunesResponse; error: string | null } | undefined> {
   try {
+    // console.log([params, "-------BuyRunesParams"])
     let url = `${process.env.NEXT_PUBLIC_URL}/api/order/create-buying-psbt`;
     const response = await axios.post(url, {
       utxo_id: params.utxo_id,

@@ -15,7 +15,7 @@ const ListUtxosPage = () => {
     const walletDetails = useWalletAddress();
     const [runes, setRunes] = useState<Rune[]>([]);
     const [expandedRuneId, setExpandedRuneId] = useState<string | null>(null);
-  
+  console.log(runes, "------------runes in dashbord")
   
     const getRunesDetails = async () => {
       try {

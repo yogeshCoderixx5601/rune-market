@@ -7,7 +7,6 @@ import { validatePsbt } from "..";
 // Initialize the bitcoinjs-lib library with secp256k1
 bitcoin.initEccLib(ecc);
 
-
 function addFinalScriptWitness(signedListingPSBT: string): any {
   let newPSBT = null;
   try {
@@ -23,6 +22,7 @@ function addFinalScriptWitness(signedListingPSBT: string): any {
             input.tapKeySig.__proto__.constructor([1, 65, ...input.tapKeySig]),
             "FINALSCRIPTWITNESS"
           );
+
           psbt.updateInput(idx, {
             finalScriptWitness: input.tapKeySig.__proto__.constructor([
               1,
@@ -40,7 +40,7 @@ function addFinalScriptWitness(signedListingPSBT: string): any {
 
     // Verifies that the actual owner address has signed the PSBT
     return newPSBT;
-  } catch (e: any) {
+  } catch (e:any) {
     if (e.message == "Not finalized") {
       throw Error("Please sign and finalize the PSBT before submitting it");
     } else if (e.message != "Outputs are spending more than Inputs") {
@@ -79,6 +79,7 @@ function verifySignature(signedListingPSBT: string): boolean {
 
     // Verifies that the actual owner address has signed the PSBT
     return validatePsbt(signedListingPSBT);
+    console.log("after validate psbt");
   } catch (error) {
     // Handle the error here
     console.error("Error while verifying signature:", error);
@@ -87,10 +88,4 @@ function verifySignature(signedListingPSBT: string): boolean {
   }
 }
 
-export {
-  verifySignature,
-  addFinalScriptWitness,
-};
-
-
-
+export { verifySignature, addFinalScriptWitness };

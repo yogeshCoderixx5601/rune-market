@@ -5,23 +5,33 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const runeName = req.nextUrl.searchParams.get("rune");
+    const runeName = req.nextUrl.searchParams.get("rune_name");
+    const address = req.nextUrl.searchParams.get("address");
+
     if (!runeName) {
       return NextResponse.json(
         { success: false, message: "Rune name is required" },
         { status: 400 }
       );
     }
-    await dbConnect()
+    if (!address) {
+      return NextResponse.json(
+        { success: false, message: "Address is required" },
+        { status: 400 }
+      );
+    }
 
-    const decodedRune = decodeURIComponent(runeName);
-    console.log(decodedRune,"---decodedRune")
+    await dbConnect();
 
-    // Example query to find UTXOs for the specified runeName
+    const decodedRuneName = decodeURIComponent(runeName);
+    const decodedAddress = decodeURIComponent(address);
+
     const result = await RuneUtxo.find({
-        rune_name: decodedRune,
-      });
-console.log(result,"---------result rune-utxo")
+      rune_name: decodedRuneName,
+      address: decodedAddress,
+    });
+    console.log(result,"-------------result")
+
     return NextResponse.json({
       result,
       success: true,
@@ -35,3 +45,6 @@ console.log(result,"---------result rune-utxo")
     );
   }
 }
+
+
+

@@ -29,6 +29,8 @@ export async function buyOrdinalPSBT(
   wallet: string,
   fee_rate: number
 ): Promise<Result> {
+  console.log("*********buyOrdinalPSBT***************");
+  console.log(payerAddress, "------------payerAddress");
   const numberOfDummyUtxosToCreate = 2;
   bitcoin.initEccLib(secp256k1);
   let payerUtxos: AddressTxsUtxo[];
@@ -44,17 +46,9 @@ export async function buyOrdinalPSBT(
     return Promise.reject("Mempool error");
   }
 
-  // dummyUtxos = await selectDummyUTXOs(payerUtxos);
   let minimumValueRequired: number;
   let vins: number;
   let vouts: number;
-
-  // if (!dummyUtxos || dummyUtxos.length < 2) {
-  //   console.log("Lacking dummy utxos");
-  //   minimumValueRequired = numberOfDummyUtxosToCreate * DUMMY_UTXO_VALUE;
-  //   vins = 0;
-  //   vouts = numberOfDummyUtxosToCreate;
-  // } else
 
   minimumValueRequired = price + numberOfDummyUtxosToCreate * DUMMY_UTXO_VALUE;
   vins = 3;
@@ -84,6 +78,8 @@ export async function buyOrdinalPSBT(
     console.log(paymentUtxos?.length, "-----------rune utxos");
 
     let psbt: any = null;
+
+    console.log({ runes }, "----- RUNES");
 
     if (
       // dummyUtxos &&
@@ -263,17 +259,15 @@ async function generateUnsignedBuyingPSBTBase64(listing: any, wallet: string) {
 
   let totalInput = 0;
 
-
   const { sellerInput, sellerOutput } = await getSellerInputAndOutput(listing);
 
- 
   // Add ordinal output
   psbt.addOutput({
     address: listing.buyer.buyerTokenReceiveAddress,
     value: ORDINALS_POSTAGE_VALUE,
   });
 
-  const latestBuyerInput = []
+  const latestBuyerInput = [];
 
   // Add payment utxo inputs
   // console.log(listing.buyer, " buyer payment utxos");
@@ -328,14 +322,11 @@ async function generateUnsignedBuyingPSBTBase64(listing: any, wallet: string) {
       );
     }
 
-
-
-    if(!totalInput){
-    // Add input to PSBT
-    psbt.addInput(input);
-    }
-    else{
-      latestBuyerInput.push(input)
+    if (!totalInput) {
+      // Add input to PSBT
+      psbt.addInput(input);
+    } else {
+      latestBuyerInput.push(input);
     }
 
     // Accumulate total input value
@@ -345,9 +336,9 @@ async function generateUnsignedBuyingPSBTBase64(listing: any, wallet: string) {
   psbt.addInput(sellerInput);
   psbt.addOutput(sellerOutput);
 
-  if(latestBuyerInput.length > 0){
-    for(const input of latestBuyerInput){
-      psbt.addInput(input)
+  if (latestBuyerInput.length > 0) {
+    for (const input of latestBuyerInput) {
+      psbt.addInput(input);
     }
   }
 

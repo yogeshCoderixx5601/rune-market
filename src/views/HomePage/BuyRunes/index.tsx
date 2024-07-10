@@ -86,9 +86,9 @@ const BuyRunePage = () => {
   
  
   
-// console.log(unsignedPsbtBase64,"---------------unsignedPsbtBase6467888")
+console.log(unsignedPsbtBase64,"---------------unsignedPsbtBase64")
   const handleBuyRunes = async (rune: IBuyRunes) => {
- 
+ console.log(rune,"----------rune buy ")
     setLoadingMap((prevLoadingMap) => ({
       ...prevLoadingMap,
       [rune._id]: true, // Set loading state for specific rune
@@ -98,7 +98,7 @@ const BuyRunePage = () => {
       [rune._id]: null, // Clear any previous error for specific rune
     }));
     const runeData = rune;
-    // console.log(runeData, "---------rune data");
+    console.log(runeData, "---------rune data");
     setRuneData(runeData);
 
     try {

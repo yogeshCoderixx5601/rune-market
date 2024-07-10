@@ -101,6 +101,7 @@ async function processOrdItem(
       wallet,
       fee_rate
     );
+    // console.log(result)
     return result;
   } else {
     throw new Error("Ord Provider Unavailable");
@@ -125,7 +126,7 @@ export async function POST(
 
   try {
     const body: any = await req.json();
-    // console.log(body)
+    console.log(body,"---------body")
     const missingFields = validateRequest(body);
 
     if (missingFields.length > 0) {
@@ -147,7 +148,7 @@ export async function POST(
       body.fee_rate,
       body.price
     );
-    // console.log(result, "process order items result")
+    console.log(result, "process order items result")
 
     //buy psbt || dummy utxo psbt
     const psbt = result.data.psbt.buyer

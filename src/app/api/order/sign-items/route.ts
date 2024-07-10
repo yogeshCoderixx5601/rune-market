@@ -1,8 +1,5 @@
 // app/api/v2/order/list-item.ts
 import { NextRequest, NextResponse } from "next/server";
-import { AddressTxsUtxo } from "@/types";
-// import { runeUtxo, Wallet } from "@/models";
-// import { getCache, setCache } from "@/lib/cache";
 import { getBTCPriceInDollars } from "@/utils";
 import {
   addFinalScriptWitness,
@@ -96,11 +93,13 @@ export async function POST(req: NextRequest) {
       });
 
       if (runeUtxo) {
+     
         let listed_price_per_token = 0;
         let totalRunes =
           runeUtxo.rune_amount /
           Math.pow(10, runeUtxo.rune_divisibility);
         console.log(totalRunes, "-----------totalRunes");
+      
         if (runeUtxo && runeUtxo.length > 0) {
           listed_price_per_token = totalRunes / orderInput.price;
         }

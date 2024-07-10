@@ -11,15 +11,15 @@ export async function POST(req: NextRequest) {
     console.log(userDetails, "-----userDetails");
     await dbConnect();
 
-    const existingUser = await User.findOne({
-      ordinal_adddress: userDetails.ordinal_adddress,
-    });
+    // const existingUser = await User.findOne({
+    //   ordinal_adddress: userDetails.ordinal_adddress,
+    // });
 
-    console.log(existingUser,"-----------existingUser")
-    if (existingUser) {
-      // User already exists, return an appropriate response
-      return NextResponse.json({ message: "User already exists" });
-    }
+    // console.log(existingUser,"-----------existingUser")
+    // if (existingUser) {
+    //   // User already exists, return an appropriate response
+    //   return NextResponse.json({ message: "User already exists" });
+    // }
     // Create a new user based on the schema
     const user = new User(userDetails);
 

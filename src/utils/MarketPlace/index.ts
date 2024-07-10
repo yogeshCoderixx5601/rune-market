@@ -49,6 +49,7 @@ export function getSellerOrdOutputValue(
 }
 
 export function validatePsbt(signedPsbt: string) {
+  console.log("*********inside validatePsbt api**********");
   try {
     // Initialize the bitcoinjs-lib library with secp256k1
     bitcoin.initEccLib(ecc);
@@ -62,16 +63,17 @@ export function validatePsbt(signedPsbt: string) {
       currentPsbt = bitcoin.Psbt.fromBase64(signedPsbt);
     }
 
-    // // console.log(currentPsbt, "CPSBT");
-    // console.log(
-    //   currentPsbt.validateSignaturesOfInput(0, schnorrValidator),
-    //   "CURRENTPSBT"
-    // );
+    // console.log(currentPsbt, "CPSBT");
+    console.log(
+      currentPsbt.validateSignaturesOfInput(0, schnorrValidator),
+      "CURRENTPSBT"
+    );
 
     const validator = currentPsbt.data.inputs[0].tapInternalKey
       ? schnorrValidator
       : ecdsaValidator;
     const isValid = currentPsbt.validateSignaturesOfInput(0, validator);
+    console.log(isValid, "-----------isValid");
     return isValid;
   } catch (error) {
     // Handle the error here

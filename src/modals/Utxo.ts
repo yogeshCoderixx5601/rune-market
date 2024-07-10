@@ -14,7 +14,7 @@ export const utxoSchema = new Schema({
   address: { type: String, required: true },
   txid: { type: String, required: true },
   vout: { type: Number, required: true },
-  utxo_id: { type: String, required: true },
+  utxo_id: { type: String, required: true, unique:true },
   value: { type: Number, required: true },
   status: { type: statusSchema, required: true },
   rune_name: { type: String, required: true },

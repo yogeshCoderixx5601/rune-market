@@ -1,26 +1,34 @@
 "use server";
-import { UtxoData } from "@/types";
-// import { IBuyRunes } from "@/types";
 import axios from "axios";
 
-interface IResult {
-  rune_name:string;
-  address:string;
+interface OrderResponse {
+  ok: boolean;
+  utxo_id: string;
+  price: number;
+  message: string;
 }
+
 interface UserResponse {
   success: boolean;
   message: string;
-  result: UtxoData[];
+  result: OrderResponse;
+}
+interface ListData {
+  items: any;
 }
 
-export async function getUtxos(
-    params: { address: string; rune_name: string }
+export async function signBulkItems(
+  listData: ListData
 ): Promise<{ data?: UserResponse; error: string | null } | undefined> {
   try {
-    let url = `${process.env.NEXT_PUBLIC_URL}/api/get-utxos`;
-    const response = await axios.get(url, {
-      params
+    // console.log(listData, "------------helper wallet");
+    let url = `${process.env.NEXT_PUBLIC_URL}/api/bulk-sign`;
+    const response = await axios.post(url, {
+      params: {
+        listData,
+      },
     });
+    // console.log(response, "--------response helper");
 
     if (response.status === 200) {
       return { data: response.data, error: null };
