@@ -24,6 +24,7 @@ export async function signBulkItems(
     // console.log(listData, "------------helper wallet");
     let url = `${process.env.NEXT_PUBLIC_URL}/api/bulk-sign`;
     const response = await axios.post(url, {
+      //here we can optimise the code by removing params send directly data inside list item
       params: {
         listData,
       },

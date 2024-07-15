@@ -5,8 +5,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useWalletAddress, useSignTx } from "bitcoin-wallet-adapter";
 import { getUtxos } from "@/apiHelper/getUtxos";
-import { listItems } from "@/apiHelper/listItems";
-import { signItems } from "@/apiHelper/signItems";
 import { bulkListing } from "@/apiHelper/bulkListing";
 import { signBulkItems } from "@/apiHelper/bulkSignItems";
 import { UtxoData } from "@/types";
@@ -21,13 +19,13 @@ interface RunesResponse {
   message: "Success";
 }
 
-interface UtxoWithAmount {
-  utxo: any;
-  inputAmount: number;
-}
+// interface UtxoWithAmount {
+//   utxo: any;
+//   inputAmount: number;
+// }
 
-const RuneUtxos = ({ rune }: { rune: string }) => {
-  console.log(rune, "rune i get");
+const RuneUtxos = ({ rune_name }: { rune_name: string }) => {
+  console.log(rune_name, "rune i get");
   const [utxos, setUtxos] = useState<UtxoData[]>([]);
   const [inputValues, setInputValues] = useState<{ [key: number]: number }>({});
   const [totals, setTotals] = useState<{ [key: number]: number }>({});
@@ -44,17 +42,22 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
   const getRuneUtxosData = async () => {
     try {
       // const encodedRune = encodeURIComponent(rune);
-     if(walletDetails && walletDetails.connected && walletDetails.ordinal_address){
-      const params = {address : walletDetails.ordinal_address,
-        rune_name:rune
+      if (
+        walletDetails &&
+        walletDetails.connected &&
+        walletDetails.ordinal_address
+      ) {
+        const params = {
+          address: walletDetails.ordinal_address,
+          rune_name: rune_name,
+        };
+        const response = await getUtxos(params);
+        const utxos = response?.data?.result;
+        console.log(utxos, "addressbased utxos");
+        if (utxos) {
+          setUtxos(utxos);
+        }
       }
-       const response = await getUtxos(params);
-      const utxos = response?.data?.result;
-      console.log(utxos,"addressbased utxos")
-      if (utxos) {
-        setUtxos(utxos);
-      }
-     }
     } catch (error) {
       console.log("Error fetching rune UTXOs:", error);
     }
@@ -91,19 +94,19 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
   ) => {
     const value = Number(event.target.value);
     setInputValues((prev) => ({ ...prev, [utxoIndex]: value }));
-    console.log(value,"--------------value")
+    console.log(value, "--------------value");
     const totalValue = calculateTotal(
       value,
       utxos[utxoIndex]?.rune_amount,
       utxos[utxoIndex]?.rune_divisibility,
       utxoIndex
     );
-    console.log(totalValue,"------------total value")
+    console.log(totalValue, "------------total value");
     setTotals((prev) => ({ ...prev, [utxoIndex]: totalValue }));
   };
 
   const listItemData = async (details: any) => {
-    console.log(details,"-----utxo")
+    console.log(details, "-----utxo");
     const response = await bulkListing(details);
     console.log(response, "---------------response bulkListing");
     if (response?.data) {
@@ -133,7 +136,7 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
       alert("Connect wallet to proceed");
       return;
     }
-    let inputs = [];
+    let inputs:any= [];
     Object.entries(inputValues).map((_, idx) => {
       inputs.push({
         address: walletDetails.ordinal_address,
@@ -142,12 +145,12 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
         index: [idx],
       });
     });
-    inputs.push({
-      address: walletDetails.ordinal_address,
-      publickey: walletDetails.ordinal_pubkey,
-      sighash: 131,
-      index: [0],
-    });
+    // inputs.push({
+    //   address: walletDetails.ordinal_address,
+    //   publickey: walletDetails.ordinal_pubkey,
+    //   sighash: 131,
+    //   index: [0],
+    // });
 
     const options: any = {
       psbt: unsignedPsbtBase64,
@@ -247,14 +250,12 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
       <div className="w-full flex justify-center mt-4">
         {!unsignedPsbtBase64 ? (
           <div className="">
-           
-              <button
-                onClick={handleListAll}
-                className="custom-gradient text-white font-bold py-2 px-4 rounded cursor-pointer"
-              >
-                List All
-              </button>
-            
+            <button
+              onClick={handleListAll}
+              className="custom-gradient text-white font-bold py-2 px-4 rounded cursor-pointer"
+            >
+              List All
+            </button>
           </div>
         ) : (
           <button
@@ -270,6 +271,9 @@ const RuneUtxos = ({ rune }: { rune: string }) => {
 };
 
 export default RuneUtxos;
+
+
+
 
 // "use client";
 // import { RootState } from "@/stores";

@@ -71,13 +71,8 @@ export async function POST(req: NextRequest) {
       //   orderInput.price
     ) {
       // console.log("adding final script witness");
-      // console.log(
-      //   orderInput.receiveAddress,
-      //   "------------orderInput.items.receiveAddress"
-      // );
 
       const psbt = addFinalScriptWitness(orderInput.signed_listing_psbt_base64);
-      // console.log(psbt, "--------------addFinalScriptWitness");
       if (
         orderInput.receiveAddress.startsWith("bc1p") ||
         orderInput.receiveAddress.startsWith("tb1q")
@@ -88,8 +83,6 @@ export async function POST(req: NextRequest) {
           return NextResponse.json(
             {
               ok: false,
-              //   utxo_id: orderInput.utxo_id,
-              //   price: orderInput.price,
               message: "Invalid signature",
             },
             { status: 500 }
@@ -116,7 +109,7 @@ export async function POST(req: NextRequest) {
 
         await dbConnect();
         const runeUtxo = await RuneUtxo.findOne({ utxo_id });
-
+        //create an new empty psbt
         let psbt = new bitcoin.Psbt({
           network: process.env.NEXT_PUBLIC_NETWORK ? testnet : undefined,
         });
