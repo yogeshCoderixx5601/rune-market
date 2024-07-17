@@ -34,4 +34,5 @@ export const utxoSchema = new Schema({
   signed_psbt: { type: String },
   unsigned_psbt: { type: String },
   listed_maker_fee_bp: { type: Number, default: 100 },
+  in_memepool:{type:Boolean, default:false}
 });

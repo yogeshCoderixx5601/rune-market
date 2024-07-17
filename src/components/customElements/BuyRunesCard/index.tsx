@@ -5,19 +5,26 @@ import {
   calculateAveragePrice,
   convertSatoshiToBTC,
   convertSatoshiToUSD,
+  formatNumber,
+  getBTCPriceInDollars,
+  convertBTCPriceInDollars,
 } from "@/utils";
 import { Utxo } from "@/views/SingleRune";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import mempoolJS from "@mempool/mempool.js";
 import BuyRuneButton from "../BuyRuneButton";
-
+import { RiBtcFill } from "react-icons/ri";
+import { IoLogoUsd } from "react-icons/io5";
 interface Props {
   selectedRunes: Utxo[];
 }
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
 
 const RuneTableFooter: React.FC<Props> = ({ selectedRunes }) => {
   const [feeRate, setFeeRate] = useState(0);
+  const [showDetails, setShowDetails] = useState(true);
   const BtcPrice = useSelector(
     (state: RootState) => state.general.btc_price_in_dollar
   );
@@ -38,53 +45,97 @@ const RuneTableFooter: React.FC<Props> = ({ selectedRunes }) => {
   }, []);
 
   const totalRunePriceSatoshi = calculateTotalRunePrice(selectedRunes);
+  // console.log(totalRunePriceSatoshi, "----totalRunePriceSatoshi");
   const totalRunePriceBTC = convertSatoshiToBTC(totalRunePriceSatoshi);
-  const totalRunePriceUSD = convertSatoshiToUSD(totalRunePriceBTC, BtcPrice);
+  // console.log(totalRunePriceBTC, "-----totalRunePriceBTC");
+  const totalRunePriceUSD = convertSatoshiToUSD(
+    totalRunePriceSatoshi,
+    BtcPrice
+  );
+  // console.log(totalRunePriceUSD, "-totalRunePriceUSD");
 
   const marketplaceFeeBTC = calculateMarketplaceFee(totalRunePriceBTC);
-  const marketplaceFeeUSD = convertSatoshiToUSD(marketplaceFeeBTC, BtcPrice);
+  // console.log(marketplaceFeeBTC, "-marketplaceFeeBTC");
+
+  const marketplaceFeeUSD = convertBTCPriceInDollars(
+    marketplaceFeeBTC,
+    BtcPrice
+  );
+  // console.log(marketplaceFeeUSD, "--------marketplaceFeeUSD");
 
   const youPayBTC = totalRunePriceBTC + marketplaceFeeBTC;
+  // console.log(youPayBTC, "-----youPayBTC");
   const youPayUSD = totalRunePriceUSD + marketplaceFeeUSD;
+  // console.log(youPayUSD, "-------you pay usd");
 
   return (
-    <div className="absolute bottom-0 left-0 w-full bg-[#8e8e8e] rounded-b px-3 py-4">
-      <div className="flex flex-col gap-1">
-        <div className="flex justify-between text-lg font-bold">
-          <p>You Pay:</p>
-          <p>
-            {youPayBTC.toFixed(5)} BTC/${youPayUSD.toFixed(2)}
-          </p>
+    <div className="absolute bottom-0 left-0 w-full bg-gray rounded-b px-3 py-4">
+      <div className="flex flex-col gap-3 text-sm">
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between text-lg font-bold">
+            <div className="flex gap-2">
+              <p>You Pay:</p>
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="ml-2"
+              >
+                {showDetails ? <IoIosArrowDown/> : <IoIosArrowUp/>}
+              </button>
+            </div>
+            <p className="flex items-center">
+              {formatNumber(youPayBTC)}{" "}
+              <RiBtcFill className="pl-1 text-lg text-bitcoin_orange" />
+              /<IoLogoUsd className="text-lg text-green" />
+              {youPayUSD.toFixed(2)}
+            </p>
+          </div>
+          {showDetails && (
+            <>
+              <div className="flex justify-between">
+                <p>Total Rune Price:</p>
+                <p className="flex items-center">
+                  {totalRunePriceBTC.toFixed(5)}
+                  <RiBtcFill className="pl-1 text-lg text-bitcoin_orange" />
+                  /<IoLogoUsd className="text-lg text-green" />
+                  {totalRunePriceUSD.toFixed(2)}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <p>Marketplace Fee (1%):</p>
+                <p className="flex items-center">
+                  {marketplaceFeeBTC.toFixed(5)}{" "}
+                  <RiBtcFill className="pl-1 text-lg text-bitcoin_orange" />
+                  /<IoLogoUsd className="text-lg text-green" />
+                  {marketplaceFeeUSD.toFixed(2)}
+                </p>
+              </div>
+            </>
+          )}
         </div>
-        <div className="flex justify-between">
-          <p>Total Rune Price:</p>
-          <p>
-            {totalRunePriceBTC.toFixed(5)} BTC/${totalRunePriceUSD.toFixed(2)}
-          </p>
+
+        <div className="flex flex-col gap-1 border-t ">
+          <div className="flex justify-between pt-3">
+            <p>Average Price:</p>
+            <p className="flex items-center">
+              {formatNumber(calculateAveragePrice(selectedRunes))} SATS/
+              <IoLogoUsd className="text-lg text-green" />
+              {convertSatoshiToUSD(
+                calculateAveragePrice(selectedRunes),
+                BtcPrice
+              ).toFixed(5)}
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p>Fee Rate:</p>
+            <p className="flex items-center gap-1">
+              {convertSatoshiToBTC(feeRate).toFixed(5)}{" "}
+              <RiBtcFill className="pl-1 text-lg text-bitcoin_orange" />/
+              <IoLogoUsd className="text-lg text-green" />
+              {convertSatoshiToUSD(feeRate, BtcPrice).toFixed(5)}
+            </p>
+          </div>
         </div>
-        <div className="flex justify-between">
-          <p>Marketplace Fee (1%):</p>
-          <p>
-            {marketplaceFeeBTC.toFixed(5)} BTC/${marketplaceFeeUSD.toFixed(2)}
-          </p>
-        </div>
-        <div className="flex justify-between">
-          <p>Average Price:</p>
-          <p>
-            {calculateAveragePrice(selectedRunes)} SATS/$
-            {convertSatoshiToUSD(
-              calculateAveragePrice(selectedRunes),
-              BtcPrice
-            ).toFixed(5)}
-          </p>
-        </div>
-        <div className="flex justify-between">
-          <p>Fee Rate:</p>
-          <p>
-            {convertSatoshiToBTC(feeRate).toFixed(5)} BTC/$
-            {convertSatoshiToUSD(feeRate, BtcPrice).toFixed(5)}
-          </p>
-        </div>
+
         {totalRunePriceUSD >= 1 ? (
           ""
         ) : (
@@ -92,11 +143,13 @@ const RuneTableFooter: React.FC<Props> = ({ selectedRunes }) => {
             Total price should be greater than $1 to proceed.
           </p>
         )}
-        <BuyRuneButton selectedRunes={selectedRunes} totalRunePriceUSD={totalRunePriceUSD}/>
+        <BuyRuneButton
+          selectedRunes={selectedRunes}
+          totalRunePriceUSD={totalRunePriceUSD}
+        />
       </div>
     </div>
   );
 };
 
 export default RuneTableFooter;
-

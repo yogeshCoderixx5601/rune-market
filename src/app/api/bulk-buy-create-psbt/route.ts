@@ -59,7 +59,7 @@ async function processOrdItem(body: OrderInput) {
       // Connect to the database
       await dbConnect();
 
-      // Find the item in the database
+      // Find the item in the database change type
       const dbItem: any | null = await RuneUtxo.findOne({
         utxo_id,
         listed: true,

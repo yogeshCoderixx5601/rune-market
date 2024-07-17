@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNotification } from "@/stores/reducers/notificationReducer";
 import { useSignTx, useWalletAddress } from "bitcoin-wallet-adapter";
 import mempoolJS from "@mempool/mempool.js";
-import { IBuyRunes } from "@/types";
+import { IBuyRunes, RuneUtxo } from "@/types";
 import { useRouter } from "next/navigation";
 import { setNewActivity } from "@/stores/reducers/generalReducer";
 import axios from "axios";
 import { Utxo } from "@/views/SingleRune";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   selectedRunes: Utxo[];
@@ -238,16 +239,14 @@ const BuyRuneButton: React.FC<Props> = ({ selectedRunes, totalRunePriceUSD }) =>
     <button
       onClick={handleBuyRunes}
       className={`py-2 px-4 rounded mt-2 ${
-        totalRunePriceUSD >= 0
+        totalRunePriceUSD >= 1
           ? "custom-gradient text-white"
           : "bg-transparent border border-customPurple_950 text-customPurple_950 hover:cursor-not-allowed"
       }`}
-      disabled={totalRunePriceUSD < 0}
+      disabled={totalRunePriceUSD < 1}
     >
 
-      {selectedRunes.length >= 1
-        ? `Buy ${selectedRunes.length}`
-        : "Select Rune to Buy"}
+     {loading ? <CircularProgress size={20} color="secondary"/> : selectedRunes.length >= 1 ? `Buy ${selectedRunes.length}` : "Select Rune to Buy"}
     </button>
   );
 };

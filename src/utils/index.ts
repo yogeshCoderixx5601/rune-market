@@ -24,6 +24,11 @@ export async function getBTCPriceInDollars() {
   }
 }
 
+export function convertBTCPriceInDollars(marketplaceFeeBTC:number,btcPrice:number){
+   const priceInUSD = marketplaceFeeBTC * btcPrice;
+    return priceInUSD;
+}
+
 export function convertSatoshiToBTC(satoshi: number) {
   const SATOSHI_IN_ONE_BTC = 100000000;
   return satoshi / SATOSHI_IN_ONE_BTC;
@@ -92,3 +97,4 @@ export function formatNumber(num: number) {
     return num.toString();
   }
 }
+

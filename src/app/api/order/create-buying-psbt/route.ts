@@ -93,10 +93,9 @@ async function processOrdItem(
     ordItem.value
   ) {
     const result = await buyOrdinalPSBT(
+       dbItem,
       pay_address,
       receive_address,
-      dbItem,
-      dbItem.listed_price,
       publickey,
       wallet,
       fee_rate

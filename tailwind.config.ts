@@ -17,6 +17,7 @@ const customColors = {
     DEFAULT: "#7600C5",
   },
   accent_dark: "#3d0263",
+  gray:"#8e8e8e",
   light_gray: "#cbd5e0",
   dark_gray:"#39092b",
   customPurple_800: '#942073',
