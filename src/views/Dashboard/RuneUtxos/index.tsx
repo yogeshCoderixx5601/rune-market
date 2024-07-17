@@ -204,6 +204,8 @@ const RuneUtxos = ({ rune_name }: { rune_name: string }) => {
     sendSignedPsbtAndListItems(signPsbt, listItem);
   }, [signPsbt]);
 
+  console.log(prices, totals,"---hhhh")
+
   return (
     <div className="w-full flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow-lg">
       {utxos?.map((utxo, utxoIndex) => (

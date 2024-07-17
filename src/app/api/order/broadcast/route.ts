@@ -9,6 +9,7 @@ import {
 } from "@/utils/MarketPlace/buying";
 import { fromXOnly } from "@/utils/MarketPlace";
 import { RuneUtxo, User } from "@/modals";
+import { verifyInMemepool } from "@/utils/VerifyTransactionMemepool";
 export async function POST(
   req: NextRequest,
   res: NextResponse<{
@@ -128,11 +129,12 @@ export async function POST(
     console.log(listings, "-----------------------docs before update false");
     if (txid) {
       if (listings) {
+
         await RuneUtxo.updateMany(
           { utxo_id: { $in: outputs } },
           {
             listed: false,
-            // in_mempool: true,
+            in_mempool: true,
             txid,
           }
         );
@@ -158,6 +160,10 @@ export async function POST(
     );
   }
 }
+
+
+
+
 
 // import { NextRequest, NextResponse } from "next/server";
 // import * as bitcoin from "bitcoinjs-lib";

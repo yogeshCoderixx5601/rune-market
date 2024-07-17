@@ -5,14 +5,17 @@ import { fetchLatestUtxoData } from "@/utils/MarketPlace";
 import { buyOrdinalPSBT } from "@/utils/MarketPlace/buying";
 import { NextRequest, NextResponse } from "next/server";
 
-interface OrderInput {
+interface Items {
   utxo_id: string;
+  price: number;
+}
+interface OrderInput {
   pay_address: string;
   receive_address: string;
   publickey: string;
   fee_rate: number;
   wallet: string;
-  price: number; //in_sats
+  runes:Items[];
 }
 
 // Validate the POST method and necessary fields in the request
@@ -41,7 +44,7 @@ function validateRequest(body: OrderInput): string[] {
 }
 
 // Fetch and process the ordItem data
-async function processOrdItem(body: any) {
+async function processOrdItem(body: OrderInput) {
   const validItems: any[] = []; // Array to store valid item details
 
   // Loop through each rune in the body
@@ -132,7 +135,7 @@ export async function POST(
   console.log("***** BULK BUY CREATE UNSIGNED BUY PSBT API CALLED *****");
 
   try {
-    const body: any = await req.json();
+    const body: OrderInput = await req.json();
     console.log(body, "---------body");
 
     const missingFields = validateRequest(body);
@@ -164,7 +167,7 @@ export async function POST(
           ? 1
           : result.data.psbt.buyer.unsignedBuyingPSBTInputSize,
       // ...result,
-      utxo_id: body.utxo_id,
+      // utxo_id: body.utxo_id,
       receive_address: body.receive_address,
       pay_address: body.pay_address,
       for: result.data.for,}

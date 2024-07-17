@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
           let totalRunes =
             runeUtxo.rune_amount / Math.pow(10, runeUtxo.rune_divisibility);
           console.log(totalRunes, "-----------totalRunes");
-          if (runeUtxo && runeUtxo.length > 0) {
+          if (totalRunes && price) {
             listed_price_per_token = totalRunes / price;
           }
           runeUtxo.listed = true;
